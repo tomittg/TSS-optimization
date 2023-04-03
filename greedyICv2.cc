@@ -26,15 +26,15 @@ set<int> greed();
 int main() {
    srand(time(NULL));
 
-    readGraph();
-    set<int> minimumS = greed();
+   readGraph();
+   set<int> minimumS = greed();
 
-    for (int n : minimumS){
-        cout << n << " ";
-    }
-    cout << endl;
+   for (int n : minimumS){
+      cout << n << " ";
+   }
+   cout << endl;
 
-    return 0;
+   return 0;
 }
 
 void readGraph(){
