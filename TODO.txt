@@ -1,0 +1,5 @@
+Standarize input + output across all programs
+Standarize algorythm execution (same structure just changing diffusion model)
+Local search algorythms
+Metaheuristics algorythms
+Experimentation setup
