@@ -3,3 +3,4 @@ Standarize algorythm execution (same structure just changing diffusion model)
 Local search algorythms
 Metaheuristics algorythms
 Experimentation setup
+Add make for linux (possibly for windows too)
