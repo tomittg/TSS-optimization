@@ -59,6 +59,7 @@ void LTDiffusion(int node, priority_queue<pair<int,int>, vector<pair<int,int>>, 
    activationQueue.push(node);
    activatedNodes[node] = true;
    sumActivatedNodes++;
+   
    for(int neighbourNode : graph[node]){
       currentDegree[neighbourNode]--;
       candidateNodes.push({neighbourNode, currentDegree[neighbourNode]});
@@ -74,9 +75,11 @@ void LTDiffusion(int node, priority_queue<pair<int,int>, vector<pair<int,int>>, 
             activatedNodes[adjacentNode] = true; 
             sumActivatedNodes++;
             for(int neighbourNode : graph[adjacentNode]){
-               currentDegree[neighbourNode]--;
-               candidateNodes.push({neighbourNode, currentDegree[neighbourNode]});
-               nodeUpdates[neighbourNode]++;
+               if(!activatedNodes[neighbourNode]){
+                  currentDegree[neighbourNode]--;
+                  candidateNodes.push({neighbourNode, currentDegree[neighbourNode]});
+                  nodeUpdates[neighbourNode]++;
+               }
             }
          }
       }
