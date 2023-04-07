@@ -166,7 +166,7 @@ set<int> localSearch(){
                maxCurrentDegree = currentDegreeCopy;
             }
          }
-         else {
+         else if (0){
             int activated = removeAndDiffuseS(i, S, activatedNodesCopy, currentDegreeCopy);
             if(activated > maxActivated.second){
                maxActivated = make_pair(i, activated);
@@ -177,6 +177,7 @@ set<int> localSearch(){
       }
       activatedNodes = maxActivatedNodes;
       currentDegree = maxCurrentDegree;
+      sumActivatedNodes += maxActivated.second;
       S.insert(maxActivated.first);
    }
    return S;
