@@ -8,6 +8,7 @@
 #include <chrono>
 #include "main.hh"
 #include "greedyLT.hh"
+#include "genetico.hh"
 #include "difusioLT.hh"
 
 using namespace std;
@@ -49,6 +50,20 @@ int main(int argc, char* argv[]) {
             cout << "Greedy time is: " << time << endl;
 
             int total = LT(minimumS);
+            cout << "The total number of nodes is: " << graph.size()-1 << " and the total active number of nodes is: " << total << endl;
+
+            start = chrono::high_resolution_clock::now();
+
+             minimumS = algorimtoGenetico();
+
+            end = chrono::high_resolution_clock::now();
+            time = chrono::duration_cast<chrono::microseconds>(end - start).count() / 1000000.0;
+
+
+            cout << "The minimum set is: " << minimumS.size() << endl;
+            cout << "algorimtoGenetico time is: " << time << endl;
+
+            total = LT(minimumS);
             cout << "The total number of nodes is: " << graph.size()-1 << " and the total active number of nodes is: " << total << endl;
             
             writeOnFile(minimumS, directoryGreedy.string()+"/"+file.path().filename().string()+".out");
