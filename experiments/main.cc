@@ -40,21 +40,21 @@ int main(int argc, char* argv[]) {
 
             auto start = chrono::high_resolution_clock::now();
 
-            set<int> minimumS = greed();
+            //set<int> minimumS = greed();
 
             auto end = chrono::high_resolution_clock::now();
             auto time = chrono::duration_cast<chrono::microseconds>(end - start).count() / 1000000.0;
 
 
-            cout << "The minimum set is: " << minimumS.size() << endl;
-            cout << "Greedy time is: " << time << endl;
+            //cout << "The minimum set is: " << minimumS.size() << endl;
+            //cout << "Greedy time is: " << time << endl;
 
-            int total = LT(minimumS);
-            cout << "The total number of nodes is: " << graph.size()-1 << " and the total active number of nodes is: " << total << endl;
+            //int total = LT(minimumS);
+            //cout << "The total number of nodes is: " << graph.size()-1 << " and the total active number of nodes is: " << total << endl;
 
             start = chrono::high_resolution_clock::now();
 
-             minimumS = algorimtoGenetico();
+            set<int> minimumS = algorimtoGenetico();
 
             end = chrono::high_resolution_clock::now();
             time = chrono::duration_cast<chrono::microseconds>(end - start).count() / 1000000.0;
@@ -63,6 +63,7 @@ int main(int argc, char* argv[]) {
             cout << "The minimum set is: " << minimumS.size() << endl;
             cout << "algorimtoGenetico time is: " << time << endl;
 
+            int total = 0;
             total = LT(minimumS);
             cout << "The total number of nodes is: " << graph.size()-1 << " and the total active number of nodes is: " << total << endl;
             

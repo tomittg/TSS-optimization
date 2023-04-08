@@ -28,8 +28,14 @@ struct Chromosoma {
 };
 
 int calcularFitness(vector<int>& genes){
-    set<int> setNodes(genes.begin(), genes.end());
-    return LT(setNodes);
+    set<int> setNodes;
+    for(int i = 0; i < genes.size();++i){
+        if(genes[i] > 0){
+            setNodes.insert(i);
+        }
+    }
+    int LTentero = LTPercentage(setNodes,0.2);
+    return LTentero;
 }
 
 Chromosoma generate_individual() {
@@ -69,8 +75,8 @@ void evaluar_population(std::vector<Chromosoma>& hijos) {
     for (int i = 0; i < hijos.size(); i++) {
         if (!hijos[i].evualated) {  // Comprobar si el individuo ha sido evaluado en la generación actual
             // Evaluar el individuo y actualizar su valor objetivo y su variable "evaluado"
-            float fitness = 0.0;
-            fitness += calcularFitness(hijos[i].genes);
+            int fintnes = calcularFitness(hijos[i].genes);
+            float fitness  = calcularFitness(hijos[i].genes);
             hijos[i].fitness = fitness;
             hijos[i].evualated = true;
         }
@@ -116,6 +122,12 @@ pair<int,int> seleccion_torneo(const vector<Chromosoma>& poblacion, int tam_torn
 
 vector<Chromosoma> selection(vector<Chromosoma> &population_lt) {
     sort(population_lt.begin(), population_lt.end(), compare_individuals);
+    /*if(population_lt[0].fitness == graph.size()){
+        vector<Chromosoma> end;
+        end.push_back(population_lt[0]);
+        return end;
+    }*/
+    
     vector<Chromosoma> new_population;
     int best_size = POP_SIZE / 10;
 
@@ -140,24 +152,35 @@ vector<Chromosoma> selection(vector<Chromosoma> &population_lt) {
 set<int> algorimtoGenetico() {
     std::random_device rd;
     std::mt19937 generador(rd());
-    POP_SIZE = 5*graph.size();
-    GEN_SIZE = POP_SIZE ;
+    POP_SIZE = graph.size();
+    GEN_SIZE = graph.size();
     MUTATION_RATE = 1/graph.size();
-    GENERATIONS = 100;
+    GENERATIONS = graph.size()/4;
     srand(time(nullptr));
     
     vector<Chromosoma> population = initial_population();
+    bool found = false;
+    int gen = 0;
 
-    for (int gen = 0; gen < GENERATIONS; ++gen) {
+    while(gen < GENERATIONS && !found) {
         evaluar_population(population);
         population = selection(population);
+        if(population.size() == 1){
+            found = true;
+        }
+        ++gen;
     }
     
     evaluar_population(population);
     sort(population.begin(), population.end(), compare_individuals);
-    vector<int> correctNodes = population[0].genes;
 
-    set<int> setNodes(correctNodes.begin(), correctNodes.end());
+    set<int> setNodes;
+    for(int i = 0; i < population[0].genes.size();++i){
+        if(population[0].genes[i] > 0){
+            setNodes.insert(i);
+        }
+    }
+    
     return setNodes;
 }
 

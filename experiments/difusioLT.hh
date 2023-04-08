@@ -7,5 +7,6 @@
 using namespace std;
 
 int LT(set<int> minimumS);
+int LTPercentage (set<int> minimumS, float percentage);
 
 #endif
