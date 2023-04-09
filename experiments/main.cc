@@ -15,6 +15,7 @@ using namespace std;
 namespace fs = std::filesystem;
 
 double r;
+double sizeEdges;
 vector<vector<int>> graph;  // adjacency list of the graph
 
 void Usage() {
@@ -82,6 +83,7 @@ void readFileGraph(string s) {
         getline(file, line); //Reads the first line
         sscanf(line.c_str(), "p edge %d %d", &n, &m); 
         graph = vector<vector<int>> (n+1);
+        sizeEdges = m;
         for(int i = 0; i < m; ++i) {
             int u, v;
             getline(file, line);
