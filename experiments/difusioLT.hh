@@ -7,6 +7,6 @@
 using namespace std;
 
 int LT(set<int> minimumS);
-int LTPercentage (set<int> minimumS, float percentage);
+pair<vector<bool>,int> LTBool (set<int> minimumS);
 
 #endif
