@@ -6,8 +6,8 @@
 #include <fstream>
 #include <filesystem>
 #include <chrono>
+#include <algorithm>
 #include "main.hh"
-#include "greedyLT.hh"
 #include "genetico.hh"
 #include "difusioLT.hh"
 
@@ -25,52 +25,55 @@ void Usage() {
 
 void readFileGraph(string s);
 
-void writeOnFile(const set<int>& minimumS, string s);
+void writeSetsOnFile(const set<int>& minimumS, double time, int size, string s);
+
+bool compare_file_size(const fs::directory_entry& file1, const fs::directory_entry& file2) {
+    return fs::file_size(file1.path()) < fs::file_size(file2.path());
+}
 
 int main(int argc, char* argv[]) {
     if (argc != 2) Usage();
     r = stod(argv[1]);
+    
+    string outPut = "ResultsGeneticoLT";
+    outPut += r == 0.75 ? "075" : "";
     fs::path directoryInstances = fs::current_path() / "instances"; //directory with graphs
-    fs::path directoryGreedy = fs::current_path() / "greedyResults"; //directory for greedyResults
+    fs::path directorylocalSearchLT = fs::current_path() / outPut; //directory for localSearchResultsLTv2
+    std::vector<fs::directory_entry> files;
+    cout << directorylocalSearchLT;
 
-    for (auto file : fs::directory_iterator(directoryInstances)) { //go through the file's
+
+    for (const auto& file : fs::directory_iterator(directoryInstances)) {
+        files.push_back(file);
+    }
+
+    std::sort(files.begin(), files.end(), compare_file_size);
+    set<int> minimumS;
+    int total = 0;
+
+    for (auto file : files) { //go through the file's
         if (!file.is_directory()) {
             cout << file.path().filename().string() << endl;
+            string name = file.path().filename().string();
 
+            //localSearch version 1
+            
             readFileGraph(file.path().string());
 
-            auto start = chrono::high_resolution_clock::now();
-
-            //set<int> minimumS = greed();
-
-            auto end = chrono::high_resolution_clock::now();
-            auto time = chrono::duration_cast<chrono::microseconds>(end - start).count() / 1000000.0;
-
-
-            //cout << "The minimum set is: " << minimumS.size() << endl;
-            //cout << "Greedy time is: " << time << endl;
-
-            //int total = LT(minimumS);
-            //cout << "The total number of nodes is: " << graph.size()-1 << " and the total active number of nodes is: " << total << endl;
-
-            start = chrono::high_resolution_clock::now();
-
-            set<int> minimumS = algorimtoGenetico();
-
-            end = chrono::high_resolution_clock::now();
-            time = chrono::duration_cast<chrono::microseconds>(end - start).count() / 1000000.0;
-
+            auto startg1 = chrono::high_resolution_clock::now();
+            minimumS = algorimtoGenetico();
+            auto endg1 = chrono::high_resolution_clock::now();
+            auto timeg1 = chrono::duration_cast<chrono::microseconds>(endg1 - startg1).count() / 1000000.0;
 
             cout << "The minimum set is: " << minimumS.size() << endl;
-            cout << "algorimtoGenetico time is: " << time << endl;
+            cout << "algorimtoGenetico time is: " << timeg1 << endl;
 
             int total = 0;
             total = LT(minimumS);
             cout << "The total number of nodes is: " << graph.size()-1 << " and the total active number of nodes is: " << total << endl;
-            
-            writeOnFile(minimumS, directoryGreedy.string()+"/"+file.path().filename().string()+".out");
+
+            writeSetsOnFile(minimumS, timeg1, minimumS.size(), directorylocalSearchLT.string()+"/"+name+".out");
         }
-        cout << endl;
     }
 }
 
@@ -82,8 +85,8 @@ void readFileGraph(string s) {
     if(file.is_open())  {
         getline(file, line); //Reads the first line
         sscanf(line.c_str(), "p edge %d %d", &n, &m); 
-        graph = vector<vector<int>> (n+1);
         sizeEdges = m;
+        graph = vector<vector<int>> (n+1);
         for(int i = 0; i < m; ++i) {
             int u, v;
             getline(file, line);
@@ -95,13 +98,11 @@ void readFileGraph(string s) {
     } else cout << "Error opening the file" << endl;
 }
 
-void writeOnFile(const set<int>& minimumS, string s) {
+void writeSetsOnFile(const set<int>& minimumS, double time, int size, string s) {
     ofstream file(s);
     if(file.is_open()) {
-        for(auto s : minimumS) file << s << " ";
-        file << endl;
+        file << time << " " << size << endl;
+        for(auto s : minimumS) file << s << endl;
         file.close();
     }
 }
-
-

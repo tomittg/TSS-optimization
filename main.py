@@ -2,7 +2,7 @@ import networkx as nx
 from pyvis.network import Network
 
 # Read the graph data from "graph.txt"
-with open('graph.txt', 'r') as file:
+with open('/home/rlp/Documentos/Uni/A/Proyecto/instances/instances/socfb-nips-ego.dimacs', 'r') as file:
     data = file.read()
 
 lines = data.split('\n')
@@ -15,8 +15,9 @@ S = lines[-1].split(' ')
 
 edges = []
 for line in lines:
-    edge = (line.split(' ')[1], line.split(' ')[2])
-    edges.append(edge)
+    if(len(line) > 0):
+        edge = (line.split(' ')[1], line.split(' ')[2])
+        edges.append(edge)
 
 """
 # Parse the final set of activated nodes
@@ -51,9 +52,5 @@ for edge in G.edges():
 for node in final_set:
     net.nodes[int(node)]['color'] = '#19A7CE'
 """
-net.(
-    {'js': ['https://cdnjs.cloudflare.com/ajax/libs/screenfull.js/3.3.2/screenfull.min.js'],
-     'css': ['https://cdnjs.cloudflare.com/ajax/libs/screenfull.js/3.3.2/screenfull.min.css']}
-)
 
 net.show("mygraph.html")

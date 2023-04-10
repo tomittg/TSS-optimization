@@ -41,7 +41,7 @@ bool equalChromosoma(Chromosoma a,Chromosoma b){
 
 void mutate(Chromosoma &individual, double Mutation_Rate ) {
     for (int i = 1; i < individual.genes.size(); ++i) {
-        if (static_cast<double>(rand()) / RAND_MAX < Mutation_Rate) {
+        if (individual.genes[i] && static_cast<double>(rand()) / RAND_MAX < Mutation_Rate) {
             individual.genes[i] = 1 - individual.genes[i];
         }
     }
@@ -62,7 +62,7 @@ Chromosoma generate_individual(Chromosoma gredy) {
     /*Chromosoma individual;
     individual.evualated = false;
     individual.fitness = 0.0;*/
-    mutate(gredy,0.3);
+    mutate(gredy,0.25);
     //individual.genes.resize(GEN_SIZE);
     /*for (int i = 1; i < individual.genes.size(); ++i) {
         individual.genes[i] = rand() % 2;
@@ -148,7 +148,6 @@ vector<Chromosoma> selection(vector<Chromosoma> &population_lt) {
     for(int i = 0; i < population_lt.size()/10;++i) {
         new_population.push_back(population_lt[i]);
     }
-    int i = 0;
     while(new_population.size() < population_lt.size()) {
         uniform_int_distribution<int> distribucion(0, population_lt.size()-1);
         int padre1 = distribucion(generador);
@@ -159,22 +158,23 @@ vector<Chromosoma> selection(vector<Chromosoma> &population_lt) {
             Chromosoma offspring = crossover(population_lt[padre1], population_lt[padre2]);
             mutate(offspring,MUTATION_RATE);
             int fitnesHijo = calcularFitness1(offspring.genes);
-            if((fitnesHijo > fitnessPadre) || (fitnesHijo == fitnessPadre && count(offspring.genes.begin(),offspring.genes.end(),1) <= count(population_lt[superar].genes.begin(),population_lt[superar].genes.end(),1))) {
+            //if((fitnesHijo > fitnessPadre) || (fitnesHijo == fitnessPadre && count(offspring.genes.begin(),offspring.genes.end(),1) <= count(population_lt[superar].genes.begin(),population_lt[superar].genes.end(),1))) {
                 offspring.fitness = fitnesHijo;
                 offspring.evualated = true;
                 new_population.push_back(offspring);
-            }
+            //}
         }
-        ++i;
     }
+    sort(new_population.begin(), new_population.end(), compare_individuals);
     return new_population;
 }
 
 set<int> algorimtoGenetico() {
-    POP_SIZE = 100;
+    int ratio = 4 ;
+    POP_SIZE = 200;
     GEN_SIZE = graph.size();
-    MUTATION_RATE = 1/graph.size();
-    GENERATIONS = 50; //graph.size();
+    MUTATION_RATE = (1/graph.size());
+    GENERATIONS = 200; //graph.size();
     srand(time(nullptr));
     
     vector<Chromosoma> population = initial_population();
@@ -184,13 +184,14 @@ set<int> algorimtoGenetico() {
     Chromosoma fitnessBest;
 
     while(gen < GENERATIONS && !found) {
+        cout << "generacion: " << gen << endl;
         evaluar_population(population);
         population = selection(population);
         if(gen == 0){
             fitnessBest = population[0];
         }
         bool equal = equalChromosoma(population[0],fitnessBest);
-        if(equal && geneReapet > 20){
+        if(equal && geneReapet > ratio){
             found = true;
         }
         else if(equal){

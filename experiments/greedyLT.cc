@@ -9,8 +9,8 @@ using namespace std;
 
 extern double r;
 extern vector<vector<int>> graph; // adjacency list of the graph
-vector<bool> activatedNodes;      // list of nodes that have been activated
-int sumActivatedNodes;            // sum of activated nodes
+vector<bool> activatedNodesv2;      // list of nodes that have been activated
+int sumActivatedNodesv2;            // sum of activated nodes
 
 struct comparePairs
 {
@@ -20,47 +20,51 @@ struct comparePairs
    }
 };
 
-void LTDiffusion(int node, priority_queue<pair<int, int>, vector<pair<int, int>>, comparePairs> &candidateNodes, vector<int> &nodeUpdates, vector<int> &currentDegree)
+void LTDiffusionv2(int node, priority_queue<pair<int, int>, vector<pair<int, int>>, comparePairs> &candidateNodes, vector<int> &nodeUpdates, vector<int> &currentDegree)
 {
    queue<int> activationQueue;
    activationQueue.push(node);
-   activatedNodes[node] = true;
-   sumActivatedNodes++;
+   activatedNodesv2[node] = true;
+   sumActivatedNodesv2++;
    for (int neighbourNode : graph[node])
    {
-      currentDegree[neighbourNode]--;
-      candidateNodes.push({neighbourNode, currentDegree[neighbourNode]});
-      nodeUpdates[neighbourNode]++;
-   }
-
-   while (!activationQueue.empty())
-   {
-      int currentNode = activationQueue.front();
-      activationQueue.pop();
-
-      for (int adjacentNode : graph[currentNode])
-      {
-         if (!activatedNodes[adjacentNode] and (graph[adjacentNode].size() - currentDegree[adjacentNode] >= r * graph[adjacentNode].size()))
-         {
-            activationQueue.push(adjacentNode);
-            activatedNodes[adjacentNode] = true;
-            sumActivatedNodes++;
-            for (int neighbourNode : graph[adjacentNode])
-            {
-               currentDegree[neighbourNode]--;
-               candidateNodes.push({neighbourNode, currentDegree[neighbourNode]});
-               nodeUpdates[neighbourNode]++;
-            }
-         }
+      if(!activatedNodesv2[neighbourNode]) {
+         currentDegree[neighbourNode]--;
+         candidateNodes.push({neighbourNode, currentDegree[neighbourNode]});
+         nodeUpdates[neighbourNode]++;
       }
    }
+
+   while (!activationQueue.empty()) 
+   {
+        int currentNode = activationQueue.front();
+        activationQueue.pop();
+
+        for (int adjacentNode : graph[currentNode])
+        {
+            if (!activatedNodesv2[adjacentNode] and (graph[adjacentNode].size() - currentDegree[adjacentNode] >= r * graph[adjacentNode].size()))
+            {
+                activationQueue.push(adjacentNode);
+                activatedNodesv2[adjacentNode] = true;
+                sumActivatedNodesv2++;
+                for (int neighbourNode : graph[adjacentNode])
+                {
+                    if(!activatedNodesv2[neighbourNode]){
+                        currentDegree[neighbourNode]--;
+                        candidateNodes.push({neighbourNode, currentDegree[neighbourNode]});
+                        nodeUpdates[neighbourNode]++;
+                    }
+                }
+            }
+        }
+    }
 }
 
 set<int> greed()
 {
    priority_queue<pair<int, int>, vector<pair<int, int>>, comparePairs> candidateNodes;
-   activatedNodes = vector<bool> (graph.size(), false);
-   sumActivatedNodes = 0;
+   activatedNodesv2 = vector<bool> (graph.size(), false);
+   sumActivatedNodesv2 = 0;
    vector<int> nodeUpdates(graph.size(), 0);
    vector<int> currentDegree(graph.size(), 0);
    set<int> S;
@@ -72,16 +76,16 @@ set<int> greed()
       currentDegree[i] = iDegree;
    }
 
-   while (sumActivatedNodes < graph.size() - 1)
+   while (sumActivatedNodesv2 < graph.size() - 1)
    {
       int node = candidateNodes.top().first;
       candidateNodes.pop();
     
       if (nodeUpdates[node] > 0)
-         nodeUpdates[node]--;
-      else if (not activatedNodes[node])
+        nodeUpdates[node]--;
+      else if (not activatedNodesv2[node])
       {
-         LTDiffusion(node, candidateNodes, nodeUpdates, currentDegree);
+         LTDiffusionv2(node, candidateNodes, nodeUpdates, currentDegree);
          S.insert(node);
       }
    }

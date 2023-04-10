@@ -1,3 +1,8 @@
 *.o
 *.exe
-/experiments/instances/*
+test*.*
+main
+*.out
+*.tar.*
+*.html
+*.json
